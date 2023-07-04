@@ -1,0 +1,139 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: sre
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fault-ui-deploy
+  namespace: sre
+  labels:
+    app: fault-ui
+    runtime: nginx
+spec:
+  revisionHistoryLimit: 5
+  replicas: 1
+  selector:
+    matchLabels:
+      app: fault-ui
+  template:
+    metadata:
+      labels:
+        app: fault-ui
+        runtime: nginx
+    spec:
+      volumes:
+        - hostPath:
+            path: /var/lib/lxcfs/proc/uptime
+            type: ""
+          name: uptime
+        - hostPath:
+            path: /var/lib/lxcfs/proc/cpuinfo
+            type: ""
+          name: cpuinfo
+        - hostPath:
+            path: /var/lib/lxcfs/proc/meminfo
+            type: ""
+          name: meminfo
+        - hostPath:
+            path: /var/lib/lxcfs/proc/stat
+            type: ""
+          name: stat
+        - hostPath:
+            path: /var/lib/lxcfs/proc/diskstats
+            type: ""
+          name: diskstats
+        - hostPath:
+            path: /var/lib/lxcfs/proc/swaps
+            type: ""
+          name: swaps
+        - hostPath:
+            path: /var/lib/lxcfs/sys/devices/system/cpu/online
+            type: ""
+          name: cpuonline
+      containers:
+        - name: fault-center
+          image: harbor.iguming.net/sre/fault-ui:latest
+          imagePullPolicy: Always
+          env:
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: POD_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+            - name: POD_IP
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.podIP
+            - name: POD_ENV
+              value: pro
+            - name: POD_APP
+              value: fault-ui
+            - name: POD_PROFILE
+              value: pro
+          ports:
+            - name: app
+              containerPort: 80
+          volumeMounts:
+            - mountPath: /proc/uptime
+              name: uptime
+            - mountPath: /proc/cpuinfo
+              name: cpuinfo
+            - mountPath: /proc/meminfo
+              name: meminfo
+            - mountPath: /proc/stat
+              name: stat
+            - mountPath: /proc/diskstats
+              name: diskstats
+            - mountPath: /proc/swaps
+              name: swaps
+            - mountPath: /sys/devices/system/cpu/online
+              name: cpuonline
+          resources:
+            limits:
+              cpu: 1
+              memory: 2048Mi
+            requests:
+              cpu: 200m
+              memory: 500Mi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: fault-ui-serv
+  namespace: sre
+  labels:
+    app: fault-ui
+spec:
+  type: ClusterIP
+  selector:
+    app: fault-ui
+  ports:
+    - name: app
+      port: 80
+      targetPort: 80
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: fault-ui-ingress
+  namespace: sre
+  labels:
+    app: fault-ui
+spec:
+  ingressClassName: "nginx"
+  rules:
+    - host: fault.iguming.net
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: fault-ui-serv
+                port:
+                  number: 80

@@ -1,0 +1,107 @@
+export const menuLst = [
+  {
+    id: "1",
+    type: 1,
+    name: "故障预案",
+    icon: "cpu",
+    hidden: false,
+    children: [
+      {
+        id: "1-1",
+        type: 2,
+        name: "容器扩缩容",
+        icon: "",
+        url: "/main/kube/deployment",
+      },
+      {
+        id: "1-2",
+        type: 2,
+        name: "容器应急保障",
+        icon: "",
+        url: "/main/kube/pod",
+      },
+      {
+        id: "1-3",
+        type: 2,
+        name: "Event事件查询",
+        icon: "search",
+        url: "/main/kube/event",
+      },
+    ],
+  },
+  {
+    id: "2",
+    type: 1,
+    name: "故障管理",
+    icon: "monitor",
+    hidden: false,
+    children: [
+      {
+        id: "2-1",
+        type: 2,
+        name: "故障预算",
+        icon: "",
+        url: "/main/fault/budget",
+      },
+      {
+        id: "2-2",
+        type: 2,
+        name: "故障运营",
+        icon: "",
+        url: "/main/fault/list",
+      },
+      {
+        id: "2-3",
+        type: 2,
+        name: "故障改进",
+        icon: "",
+        url: "/main/fault/improve",
+      },
+    ],
+  },
+  {
+    id: "3",
+    type: 1,
+    name: "监控管理",
+    icon: "",
+    children: [
+      {
+        id: "3-1",
+        type: 2,
+        name: "监控看板",
+        icon: "",
+        url: "/monitor/kanban",
+      },
+      {
+        id: "3-2",
+        type: 2,
+        name: "拨测系统",
+        icon: "",
+        url: "/monitor/dialing",
+      },
+      {
+        id: "3-3",
+        type: 2,
+        name: "告警事件",
+        icon: "",
+        url: "/monitor/alarm",
+      },
+    ],
+  },
+  {
+    id: "4",
+    type: 1,
+    name: "系统管理",
+    icon: "",
+    hidden: false,
+    children: [
+      {
+        id: "4-1",
+        type: 2,
+        name: "用户管理",
+        icon: "",
+        url: "/system/user/list",
+      },
+    ],
+  },
+];
