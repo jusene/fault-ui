@@ -16,7 +16,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from "vue";
+import { defineComponent, ref, watch } from "vue";
 import { Fold, Expand } from "@element-plus/icons-vue";
 import userInfo from "./nav-info.vue";
 import breadcrumb from "./nav-breadcrumb.vue";
@@ -29,8 +29,20 @@ export default defineComponent({
     breadcrumb,
   },
   emits: ["foldChange"],
+  props: {
+    collapseStatus: {
+      type: Boolean,
+      default: false,
+    },
+  },
   setup(props, { emit }) {
     const isFold = ref(false);
+    watch(
+      () => props.collapseStatus,
+      (val) => {
+        isFold.value = val;
+      }
+    );
     const handleFoldClick = () => {
       isFold.value = !isFold.value;
       emit("foldChange", isFold.value);

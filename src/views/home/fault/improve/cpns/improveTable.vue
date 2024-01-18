@@ -65,15 +65,13 @@ const improveAddDialogRef = ref<InstanceType<typeof improveAddDialog>>();
 const improveEditDialogRef = ref<InstanceType<typeof improveEditDialog>>();
 
 const rowData = ref();
+
 // 首次加载数据
 const improveStore = useImproveStore();
 const { actionPageSize, actionPageNum, actionTotal, actionList } =
   storeToRefs(improveStore);
-improveStore
-  .getActionRequest(actionPageNum.value, actionPageSize.value)
-  .then((res) => {
-    console.log(res);
-  });
+improveStore.getActionRequest(actionPageNum.value, actionPageSize.value);
+improveStore.getActionTotal();
 
 // 分页加载数据
 watch(

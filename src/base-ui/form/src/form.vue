@@ -13,15 +13,9 @@
               :style="props.itemStyle"
             >
               <template
-                v-if="
-                  item.type === 'input' ||
-                  item.type === 'password' ||
-                  item.type === 'number'
-                "
+                v-if="item.type === 'input' || item.type === 'password'"
               >
                 <el-input
-                  :type="isNumber(item.type)"
-                  :disabled="isDisabled(item.type, formData[`${item.field}`])"
                   :placeholder="item.placeholder"
                   v-bind="item.otheroptions"
                   :show-password="item.type === 'password'"
@@ -66,7 +60,11 @@
                 </el-input-number>
               </template>
               <template v-else-if="item.type === 'slot'">
-                <slot :name="item.field" :placeholder="item.placeholder"></slot>
+                <slot
+                  :name="item.field"
+                  :placeholder="item.placeholder"
+                  :otheroptions="item.otheroptions"
+                ></slot>
               </template>
             </el-form-item>
           </el-col>
@@ -125,20 +123,6 @@ watch(
     deep: true,
   }
 );
-
-const isNumber = (type: string) => {
-  if (type === "number") {
-    return "number";
-  }
-  return "";
-};
-
-const isDisabled = (type: string, value: number) => {
-  if (type === "number" && value < 2) {
-    return true;
-  }
-  return false;
-};
 </script>
 
 <style scoped>

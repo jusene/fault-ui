@@ -10,17 +10,20 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref } from "vue";
+import { onMounted, onUnmounted, ref } from "vue";
 
 const url = "http://172.22.3.135:3000";
 const realHeight = ref(document.documentElement.clientHeight - 94.5 + "px");
 const loading = ref(false);
 
-onMounted(() => {
-  window.onresize = function () {
-    realHeight.value = document.documentElement.clientHeight - 94.5 + "px";
-  };
-  loading.value = false;
+const handleResize = () => {
+  realHeight.value = document.documentElement.clientHeight - 20 + "px";
+};
+
+window.addEventListener("resize", handleResize);
+
+onUnmounted(() => {
+  window.removeEventListener("resize", handleResize);
 });
 </script>
 

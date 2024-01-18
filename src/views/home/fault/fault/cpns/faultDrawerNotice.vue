@@ -132,9 +132,18 @@ const NewFormConfig = computed(() => {
 });
 
 const handleNoticeAction = () => {
-  const data: any = { ...noticeFormData.value };
+  const rowdata: any = { ...noticeFormData.value };
+  const data: any = {};
+  data.metadata = rowdata.metadata;
+  data.name = rowdata.name;
+  data.domain = rowdata.domain;
+  data.description = rowdata.description;
+  data.status = rowdata.status;
+  data.reason = rowdata.reason;
+  data.faultStartAt = rowdata.faultStartAt;
   data.processPeople = processPeople.value;
   data.fllowPeople = fllowPeople.value;
+  data.process = rowdata.process;
   faultStore.updateFaultRequest(data, true).then((res) => {
     if (res.code === 200) {
       ElMessage.success({

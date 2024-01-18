@@ -83,14 +83,21 @@ onMounted(() => {
   const router = useRouter();
   const { code } = route.query;
   if (code) {
-    router.replace(window.location.origin + "/#/login");
+    // router.replace(window.location.origin + "/#/login");
     userStore.dingTalkLoginAction(code).then((res) => {
       if (res.loginStatus) {
         ElMessage.success({
           message: res.msg,
           type: "success",
         });
-        router.push("/main");
+        // router.push("/main");
+        const redirect = localStorage.getItem("fault_redirect");
+        if (redirect) {
+          router.push(JSON.parse(redirect));
+          localStorage.removeItem("fault_redirect");
+        } else {
+          router.push("/main");
+        }
       } else {
         ElMessage.warning({
           message: res.msg,

@@ -1,5 +1,6 @@
 import { defineStore } from "pinia";
 import {
+  getCategory,
   getFault,
   getFaultHistory,
   getFaultTotal,
@@ -62,6 +63,12 @@ export const useFaultStore = defineStore("fault", {
     async searchFaultRequest(faultInfo: any) {
       const searchFaultResult = await searchFault(faultInfo);
       return searchFaultResult.data;
+    },
+
+    // 获取故障类别
+    async getFaultCategoryRequest() {
+      const getFaultCategoryResult = await getCategory();
+      return getFaultCategoryResult.data;
     },
   },
 });

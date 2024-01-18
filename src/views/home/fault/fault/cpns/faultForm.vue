@@ -106,6 +106,7 @@ const handleReset = (value: any) => {
   fault.value = "";
   // 刷新数据
   faultStore.getFaultTotalRequest();
+  faultPageNum.value = 1;
   faultStore.getFaultRequest(faultPageNum.value, faultPageSize.value);
 };
 </script>

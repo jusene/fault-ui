@@ -54,7 +54,7 @@ import { pathMapToMenu } from "@/utils/map-menu";
 import { MyIcon } from "@/base-ui/icon";
 
 const menu = ref(menuLst);
-const defaultVal = ref<string>("1-1");
+const defaultVal = ref<string>("2-2");
 const router = useRouter();
 const route = useRoute();
 const props = defineProps({
@@ -70,7 +70,7 @@ const props = defineProps({
 
 const currentPath = route.path;
 const m = pathMapToMenu(menuLst, currentPath);
-defaultVal.value = m.id;
+defaultVal.value = m?.id ?? "2-1";
 
 // const handleOpen = (key: string, keyPath: string[]) => {
 //   console.log(key, keyPath);

@@ -9,12 +9,12 @@
       <h1 class="title">稳定性平台</h1>
     </div>
     <el-tabs type="border-card" stretch v-model="currentTab">
-      <el-tab-pane name="account">
+      <!-- <el-tab-pane name="account">
         <template #label>
           <span><i class="el-icon-user-solid"></i> 账号登录</span>
         </template>
         <login-account ref="accountRef" />
-      </el-tab-pane>
+      </el-tab-pane> -->
       <el-tab-pane name="ding">
         <template #label>
           <span><i class="el-icon-mobile-phone"></i> 钉钉登录</span>

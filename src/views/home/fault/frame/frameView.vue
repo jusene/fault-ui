@@ -10,9 +10,13 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, onUnmounted, ref } from "vue";
+import { ref, defineEmits, onUnmounted } from "vue";
+import { useRoute } from "vue-router";
 
-const url = "http://172.22.3.135:3002";
+const route = useRoute();
+const { id } = route.query;
+const url = "https://gumingnc.yuque.com/voph0x/db04y1/" + id;
+
 const realHeight = ref(document.documentElement.clientHeight - 20 + "px");
 const loading = ref(false);
 
@@ -25,6 +29,9 @@ window.addEventListener("resize", handleResize);
 onUnmounted(() => {
   window.removeEventListener("resize", handleResize);
 });
+
+const emits = defineEmits(["handleCollapse"]);
+emits("handleCollapse", true);
 </script>
 
 <style scoped></style>

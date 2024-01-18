@@ -5,7 +5,8 @@ type IFormType =
   | "datepicker"
   | "number"
   | "slot"
-  | "input-number";
+  | "input-number"
+  | "cascader";
 
 export interface IFormItem {
   field: string;

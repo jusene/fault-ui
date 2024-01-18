@@ -41,7 +41,7 @@ const formData = ref<any>({});
 watch(
   () => props.rowData,
   (val) => {
-    console.log(val);
+    // console.log(val);
     formData.value = val;
   }
 );
@@ -56,7 +56,7 @@ const handleSubmit = () => {
   const parentIndex = budgetList.value.findIndex(
     (obj) => obj.name === formData.value.name
   );
-  console.log(parentIndex, budgetList.value[parentIndex]);
+  // console.log(parentIndex, budgetList.value[parentIndex]);
   const childrenIndex = budgetList.value[parentIndex].children.findIndex(
     (obj: { id: any }) => obj.id === formData.value.id
   );

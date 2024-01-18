@@ -4,6 +4,7 @@ import { useKubeStore } from "./kube/kube";
 import { useBudgetStore } from "./fault/budget";
 import { useFaultStore } from "./fault/fault";
 import { useImproveStore } from "./fault/improve";
+import { useEventStore } from "./event/event";
 
 const pinia = createPinia();
 
@@ -14,4 +15,5 @@ export {
   useBudgetStore,
   useImproveStore,
   useFaultStore,
+  useEventStore,
 };

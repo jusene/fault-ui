@@ -14,6 +14,10 @@ const HomeView = () =>
   import(/* webpackChunkName: "home" */ "@/views/home/homeView.vue");
 const LoginView = () =>
   import(/* webpackChunkName: "login" */ "@/views/login/loginView.vue");
+const YuQueFrameView = () =>
+  import(
+    /* webpackChunkName: "frame" */ "@/views/home/fault/frame/frameView.vue"
+  );
 
 const routes: RouteRecordRaw[] = [
   {
@@ -24,7 +28,16 @@ const routes: RouteRecordRaw[] = [
     path: "/main",
     name: "home",
     component: HomeView,
-    children: [],
+    children: [
+      {
+        path: "yuque/index",
+        name: "yuque",
+        component: YuQueFrameView,
+        meta: {
+          title: "语雀",
+        },
+      },
+    ],
     meta: {
       title: "主页",
       isShow: true,
@@ -54,16 +67,18 @@ router.beforeEach(async (_to, _from) => {
   if (_to.meta.title) {
     document.title = _to.meta.title;
   }
+  // console.log(_to.fullPath);
   if (_to.path != "/login") {
     const token = localCache.getCache("token");
     if (!token) {
-      router.push("/login");
+      localCache.setCache("fault_redirect", _to.fullPath);
+      router.push("/login?redirect=" + _to.fullPath);
     } else {
       const userinfo = jwtTokenParse(token);
       const nowTimeStamp = dayjs().unix();
       if (!userinfo.id || userinfo.exp < nowTimeStamp) {
         localCache.deleteCache("token");
-        router.push("/login");
+        router.push("/login?redirect=" + _to.fullPath);
       }
     }
   }

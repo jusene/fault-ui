@@ -71,6 +71,18 @@ export const editFormConfig: IForm = {
       },
     },
     {
+      field: "category",
+      type: "slot",
+      label: "故障类别",
+      placeholder: "请输入故障类别",
+      options: [],
+      otheroptions: {
+        collapseTags: true,
+        collapseTagsTooltip: true,
+        clearable: true,
+      },
+    },
+    {
       field: "level",
       type: "select",
       label: "故障等级",
@@ -136,22 +148,28 @@ export const editFormConfig: IForm = {
       placeholder: "请输入语雀链接",
     },
     {
-      field: "dingUrl",
-      type: "input",
-      label: "复盘机器人url",
-      placeholder: "请输入复盘机器人钉钉url",
-    },
-    {
       field: "mainResponsibility",
       type: "slot",
       label: "主责",
       placeholder: "请输入主要责任人",
+      otheroptions: {
+        multiple: true,
+        filterable: true,
+        remote: true,
+        reserveKeyword: true,
+      },
     },
     {
       field: "secondResponsibility",
       type: "slot",
       label: "次责",
       placeholder: "请输入次责责任人",
+      otheroptions: {
+        multiple: true,
+        filterable: true,
+        remote: true,
+        reserveKeyword: true,
+      },
     },
     {
       field: "group",

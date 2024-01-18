@@ -7,6 +7,18 @@
     >
       <template #dialog-content>
         <MyForm v-bind="NewFormConfig" v-model="formData">
+          <template #category="scope">
+            <el-cascader
+              v-model="category"
+              style="width: 100%"
+              :options="categoryOptions"
+              :props="{
+                multiple: true,
+              }"
+              v-bind="scope.otheroptions"
+              :placeholder="scope.placeholder"
+            ></el-cascader>
+          </template>
           <template #mainResponsibility="scope">
             <el-select
               v-model="mainResponsibility"
@@ -60,7 +72,7 @@
 <script setup lang="ts">
 import { MyDialog } from "@/base-ui/dialog";
 import { MyForm } from "@/base-ui/form";
-import { ref, defineExpose, computed } from "vue";
+import { ref, defineExpose, computed, onMounted } from "vue";
 import { useFaultStore } from "@/store/fault/fault";
 import { editFormConfig } from "../config/edit.config";
 import { ElMessage, dayjs } from "element-plus";
@@ -88,6 +100,8 @@ const handleClose = () => {
   dialogVisible.value = false;
 };
 
+const category = ref<Array<Array<string>>>([]);
+const categoryOptions = ref([]);
 const mainResponsibility = ref([]);
 const secondResponsibility = ref([]);
 const loading = ref(false);
@@ -141,6 +155,7 @@ const handleSubmit = () => {
   data.mainResponsibility = mainResponsibility.value;
   data.secondResponsibility = secondResponsibility.value;
   data.name = "【故障】" + data.name;
+  data.category = category.value;
   // 更新故障信息
   faultStore.updateFaultRequest(data).then((res) => {
     if (res.code === 200) {
@@ -158,6 +173,14 @@ const handleSubmit = () => {
     isLoading.value = false;
   });
 };
+
+onMounted(() => {
+  faultStore.getFaultCategoryRequest().then((res) => {
+    if (res.code === 200) {
+      categoryOptions.value = res.msg;
+    }
+  });
+});
 </script>
 
 <style scoped></style>

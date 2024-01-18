@@ -12,8 +12,9 @@
 <script setup lang="ts">
 import { onMounted, onUnmounted, ref } from "vue";
 
-const url = "http://172.22.3.135:3002";
-const realHeight = ref(document.documentElement.clientHeight - 20 + "px");
+const url =
+  "http://172.22.3.135:8080/#!/state/{%22topologyId%22:%22kube-controllers%22,%22topologyOptions%22:{%22pods%22:{%22namespace%22:[%22pro%22]}}}";
+const realHeight = ref(document.documentElement.clientHeight - 94.5 + "px");
 const loading = ref(false);
 
 const handleResize = () => {

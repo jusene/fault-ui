@@ -7,13 +7,22 @@
     >
       <template #draw-content>
         <MyForm v-bind="NewFormConfig" v-model="editFormData">
+          <template #category="scope">
+            <el-cascader
+              v-model="category"
+              style="width: 100%"
+              :options="categoryOptions"
+              :props="{
+                multiple: true,
+              }"
+              v-bind="scope.otheroptions"
+              :placeholder="scope.placeholder"
+            ></el-cascader>
+          </template>
           <template #mainResponsibility="scope">
             <el-select
               v-model="mainResponsibility"
-              multiple
-              filterable
-              remote
-              reserve-keyword
+              v-bind="scope.otheroptions"
               style="width: 100%"
               :placeholder="scope.placeholder"
               :remote-method="queryPerson"
@@ -30,10 +39,7 @@
           <template #secondResponsibility="scope">
             <el-select
               v-model="secondResponsibility"
-              multiple
-              filterable
-              remote
-              reserve-keyword
+              v-bind="scope.otheroptions"
               style="width: 100%"
               :placeholder="scope.placeholder"
               :remote-method="queryPerson"
@@ -61,7 +67,14 @@
 import { editFormConfig } from "../config/edit.config";
 import { MyForm } from "@/base-ui/form";
 import { MyDrawer } from "@/base-ui/drawer";
-import { ref, defineProps, watch, defineExpose, computed } from "vue";
+import {
+  ref,
+  defineProps,
+  watch,
+  defineExpose,
+  computed,
+  onMounted,
+} from "vue";
 import { useFaultStore } from "@/store/fault/fault";
 import { storeToRefs } from "pinia";
 import { useFormConfig } from "@/hooks/useFormConfig";
@@ -74,7 +87,7 @@ const isLoading = ref(false);
 const drawerEditConfig = {
   title: "故障处理",
   destroyOnClose: true,
-  size: "30%",
+  size: "35%",
   direction: "rtl",
 };
 
@@ -87,6 +100,7 @@ const NewFormConfig = computed(() => {
     "level",
     "source",
     "group",
+    "category",
   ]);
 });
 
@@ -103,12 +117,15 @@ const handleClose = () => {
   drawerVisible.value = false;
 };
 
+const category = ref<Array<Array<string>>>([]);
+const categoryOptions = ref([]);
 const mainResponsibility = ref([]);
 const secondResponsibility = ref([]);
 const fllowPeople = ref([]);
 const processPeople = ref([]);
 const loading = ref(false);
 const options = ref<any[]>([]);
+
 const queryPerson = async (query: string) => {
   if (query) {
     loading.value = true;
@@ -124,21 +141,29 @@ const queryPerson = async (query: string) => {
   }
 };
 
-const editFormData = ref({});
+const editFormData = ref<any>({});
 watch(
   () => props.rowData,
   (val, oldval) => {
     const newVal = { ...val };
     const newTag = newVal.tag?.split(",");
+    const newCategoryLst = newVal.category?.split(",");
+    const newCategory: Array<Array<string>> = [];
+    newCategoryLst?.forEach((item: string) => {
+      const cate = item.split("/");
+      newCategory.push(cate);
+    });
     const newDomain = newVal.domain?.split(",");
     mainResponsibility.value = newVal.mainResponsibility?.split(",");
     secondResponsibility.value = newVal.secondResponsibility?.split(",");
     fllowPeople.value = newVal.fllowPeople?.split(",");
     processPeople.value = newVal.processPeople?.split(",");
+    category.value = newCategory;
     newVal.tag = newTag;
     newVal.domain = newDomain;
     newVal.mainResponsibility = mainResponsibility.value;
     newVal.secondResponsibility = secondResponsibility.value;
+    newVal.category = category.value;
     editFormData.value = newVal;
   }
 );
@@ -149,6 +174,7 @@ const handleSaveAction = () => {
   data.secondResponsibility = secondResponsibility.value;
   data.fllowPeople = fllowPeople.value;
   data.processPeople = processPeople.value;
+  data.category = category.value;
   faultStore.updateFaultRequest(data).then((res) => {
     if (res.code === 200) {
       ElMessage.success({
@@ -162,6 +188,14 @@ const handleSaveAction = () => {
     isLoading.value = false;
   });
 };
+
+onMounted(() => {
+  faultStore.getFaultCategoryRequest().then((res) => {
+    if (res.code === 200) {
+      categoryOptions.value = res.msg;
+    }
+  });
+});
 </script>
 
 <style scoped></style>

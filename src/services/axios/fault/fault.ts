@@ -14,6 +14,7 @@ enum FaultApi {
   getTag = "/get/fault/tag",
   getSource = "/get/fault/source",
   getPerson = "/get/fault/person",
+  getCategory = "/get/fault/category",
 }
 
 // 上报故障
@@ -138,6 +139,16 @@ export function getStatus() {
 export function getTag() {
   return httpRequest.get({
     url: FaultApi.getTag,
+    headers: {
+      Accept: "application/json",
+    },
+  });
+}
+
+// 获取故障类别
+export function getCategory() {
+  return httpRequest.get({
+    url: FaultApi.getCategory,
     headers: {
       Accept: "application/json",
     },

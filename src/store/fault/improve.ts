@@ -39,8 +39,13 @@ export const useImproveStore = defineStore("improve", {
     async getActionRequest(pageNum: number, pageSize: number) {
       const getActionResult = await getActions(pageNum, pageSize);
       this.actionList = getActionResult.data.msg ?? [];
-      this.actionTotal = this.actionList.length;
       return getActionResult.data;
+    },
+
+    async getActionTotal() {
+      const getActionTotal = await getAllActionsName();
+      this.actionTotal = getActionTotal.data.msg.length;
+      return getActionTotal.data;
     },
 
     async updateActionRequest(update: any) {

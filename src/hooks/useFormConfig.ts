@@ -1,4 +1,5 @@
 import {
+  getCategory,
   getDomain,
   getDomainLevel,
   getLevel,
@@ -94,6 +95,31 @@ export function useFormConfig(srcFormConfig: any, items: string[]) {
             formItem.options = res.data.msg;
           }
         });
+        break;
+      case "category":
+        formItem = srcFormConfig.formItems.find((item: { field: string }) => {
+          if (item.field === "category") {
+            return item;
+          }
+        });
+        getCategory().then((res) => {
+          if (formItem?.options) {
+            formItem.options = res.data.msg;
+          }
+        });
+        break;
+      case "incidentLevel":
+        formItem = srcFormConfig.formItems.find((item: { field: string }) => {
+          if (item.field === "incidentLevel") {
+            return item;
+          }
+        });
+        getLevel().then((res) => {
+          if (formItem?.options) {
+            formItem.options = res.data.msg;
+          }
+        });
+        break;
     }
   }
   return srcFormConfig;

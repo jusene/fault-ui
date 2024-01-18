@@ -1,16 +1,19 @@
 <template>
   <div class="home">
     <el-container class="main-content">
-      <el-aside :width="isCollapse ? '60px' : '210px'">
+      <el-aside :width="isCollapse ? '70px' : '210px'">
         <NavMenu :collapse="isCollapse" :title="'稳定性平台'" />
       </el-aside>
       <el-container class="page">
         <el-header class="page-header">
-          <NavHeader @foldChange="handleFoldChange" />
+          <NavHeader
+            @foldChange="handleFoldChange"
+            :collapseStatus="isCollapse"
+          />
         </el-header>
         <el-main class="page-content">
           <div class="page-info" id="water">
-            <RouterView />
+            <RouterView @handleCollapse="handleCollapse" />
           </div>
         </el-main>
       </el-container>
@@ -37,6 +40,10 @@ onMounted(() => {
   const container = document.getElementById("water");
   watermark.set("稳定性平台 " + user.value, container);
 });
+
+const handleCollapse = (value: boolean) => {
+  isCollapse.value = value;
+};
 </script>
 
 <style scoped lang="less">

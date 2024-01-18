@@ -6,7 +6,7 @@
           <span>故障列表</span>
           <div>
             <el-button @click="handleAddFault" :icon="DocumentAdd"
-              >录入故障</el-button
+              >补录故障</el-button
             >
             <el-button type="primary" @click="handleReportFault" :icon="Plus"
               >上报故障</el-button
@@ -24,15 +24,20 @@
           <el-tag>{{ item }}</el-tag>
         </template>
       </template>
+      <template #category="scope">
+        <template v-for="item in categoryList(scope.row.category)" :key="item">
+          <el-tag>{{ item }}</el-tag>
+        </template>
+      </template>
       <template #createTime="scope">
         <span>{{ $filters.formatCSTTime(scope.row.faultStartAt) }}</span>
       </template>
 
-      <template #stopTime="scope">
+      <!-- <template #stopTime="scope">
         <span>{{
           $filters.dateTimeDiff(scope.row.faultStopAt, scope.row.faultStartAt)
         }}</span>
-      </template>
+      </template> -->
 
       <template #endTime="scope">
         <span>{{
@@ -41,9 +46,20 @@
       </template>
 
       <template #title="scope">
-        <el-link :href="scope.row.yuQue" type="primary" target="_blank">
-          {{ scope.row.name }}</el-link
+        <el-link
+          :href="'/#/main/yuque/index?id=' + getYueQueId(scope.row.yuQue)"
+          type="primary"
         >
+          {{ scope.row.name }}
+        </el-link>
+        <el-tooltip content="复制" placement="top">
+          <el-icon
+            style="cursor: pointer"
+            @click="copyToClipboard(scope.row.name)"
+          >
+            <CopyDocument
+          /></el-icon>
+        </el-tooltip>
       </template>
 
       <template #edit="scope">
@@ -109,7 +125,7 @@ import { propList } from "../config/prop.config";
 import { computed, ref, watch } from "vue";
 import { useFaultStore } from "@/store/fault/fault";
 import { storeToRefs } from "pinia";
-import { Plus, DocumentAdd } from "@element-plus/icons-vue";
+import { Plus, DocumentAdd, CopyDocument } from "@element-plus/icons-vue";
 import { tableConfig } from "../config/table.config";
 import faultReportDialog from "./faultReportDialog.vue";
 import faultDrawerNotice from "./faultDrawerNotice.vue";
@@ -117,6 +133,7 @@ import faultDrawerEdit from "./faultDrawerEdit.vue";
 import faultDrawerHistory from "./faultDrawerHistory.vue";
 import faultAddDialog from "./faultAddDialog.vue";
 import faultActionDialog from "./faultActionDialog.vue";
+import { ElMessage } from "element-plus";
 
 const faultStore = useFaultStore();
 const rowData = ref({});
@@ -153,6 +170,14 @@ const domainList = computed(() => {
   return function (domains: string) {
     if (domains) {
       return domains.split(",");
+    }
+  };
+});
+
+const categoryList = computed(() => {
+  return function (category: string) {
+    if (category) {
+      return category.split(",");
     }
   };
 });
@@ -205,6 +230,50 @@ const handleAction = (row: any) => {
     console.log(row);
     rowData.value = row;
     pageActionDialogRef.value.dialogVisible = true;
+  }
+};
+
+const getYueQueId = computed(() => {
+  return function (yuQue: string) {
+    return yuQue?.split("/")[5];
+  };
+});
+
+// 复制到剪切板
+const copyToClipboard = (text: string) => {
+  // console.log(text);
+  // console.log(navigator.clipboard, window.isSecureContext);
+  if (navigator.clipboard && window.isSecureContext) {
+    navigator.clipboard
+      .writeText(text)
+      .then(() => {
+        ElMessage.success("复制成功");
+      })
+      .catch(() => {
+        ElMessage.warning("复制失败");
+      });
+  } else {
+    // text area method
+    let textArea = document.createElement("textarea");
+    textArea.value = text;
+    // make the textarea out of viewport
+    textArea.style.position = "fixed";
+    textArea.style.left = "-999999px";
+    textArea.style.top = "-999999px";
+    document.body.appendChild(textArea);
+    textArea.focus();
+    textArea.select();
+    new Promise<void>((res, rej) => {
+      // here the magic happens
+      document.execCommand("copy") ? res() : rej();
+      textArea.remove();
+    })
+      .then(() => {
+        ElMessage.success("复制成功");
+      })
+      .catch(() => {
+        ElMessage.warning("复制失败");
+      });
   }
 };
 </script>
