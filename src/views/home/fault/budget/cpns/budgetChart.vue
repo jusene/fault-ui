@@ -47,7 +47,7 @@ const chartStyle = {
 };
 
 const barOption = computed(() => {
-  return [120, 200, 150, 80, 70, 110];
+  return [];
 });
 
 const barXlabels = computed(() => {

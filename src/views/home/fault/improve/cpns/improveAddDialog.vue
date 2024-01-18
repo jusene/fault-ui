@@ -6,11 +6,21 @@
       @close="handleClose"
     >
       <template #dialog-content>
-        <MyForm v-bind="NewFormConfig" v-model="formData">
-          <template #prepend-content>【故障】{{ nowDate }}</template>
-          <template #processPeople="scope">
+        <MyForm v-bind="FormConfig" v-model="formData">
+          <template #name="scope">
+            <el-autocomplete
+              v-model="fault"
+              style="width: 100%"
+              :fetch-suggestions="querySearch"
+              :trigger-on-focus="false"
+              clearable
+              :placeholder="scope.placeholder"
+              @select="handleSelect"
+            />
+          </template>
+          <template #creator="scope">
             <el-select
-              v-model="processPeople"
+              v-model="creator"
               multiple
               filterable
               remote
@@ -28,9 +38,9 @@
               />
             </el-select>
           </template>
-          <template #fllowPeople="scope">
+          <template #executor="scope">
             <el-select
-              v-model="fllowPeople"
+              v-model="executor"
               multiple
               filterable
               remote
@@ -61,35 +71,46 @@
 <script setup lang="ts">
 import { MyDialog } from "@/base-ui/dialog";
 import { MyForm } from "@/base-ui/form";
-import { ref, defineExpose, computed } from "vue";
-import { useFaultStore } from "@/store/fault/fault";
+import { ref, defineExpose, defineProps, watch } from "vue";
 import { FormConfig } from "../config/form.config";
-import { ElMessage, dayjs } from "element-plus";
+import { useUserStore, useImproveStore } from "@/store";
 import { storeToRefs } from "pinia";
-import { useFormConfig } from "@/hooks/useFormConfig";
-import { useUserStore } from "@/store";
+import { ElMessage, dayjs } from "element-plus";
 import { requestPerson } from "@/services/axios/fault/fault";
 
-const userStore = useUserStore();
-const { user } = storeToRefs(userStore);
-const faultStore = useFaultStore();
-const { faultPageNum, faultPageSize } = storeToRefs(faultStore);
 const isLoading = ref(false);
-const nowDate = dayjs().format("YYYY-MM-DD");
+const userStore = useUserStore();
+const improveStore = useImproveStore();
+const { user } = storeToRefs(userStore);
+const { actionPageNum, actionPageSize } = storeToRefs(improveStore);
+const fault = ref();
+const creator = ref<string[]>([]);
+const executor = ref<string[]>([]);
+const loading = ref(false);
+const options = ref();
 const dialogConfig = {
-  title: "上报故障",
+  title: "添加Action",
   destroyOnClose: true,
   width: "40%",
   center: true,
 };
-
 const dialogVisible = ref(false);
 defineExpose({ dialogVisible });
 
-const loading = ref(false);
-const fllowPeople = ref<string[]>([]);
-const processPeople = ref<string[]>([]);
-const options = ref();
+const handleClose = () => {
+  dialogVisible.value = false;
+};
+
+const formItems = FormConfig.formItems ?? [];
+const formOrigin: any = {};
+formItems.forEach((item) => {
+  if (item.field === "creator") {
+    formOrigin[item.field] = creator.value.push(user.value);
+  } else {
+    formOrigin[item.field] = "";
+  }
+});
+const formData = ref(formOrigin);
 
 const queryPerson = async (query: string) => {
   if (query) {
@@ -106,49 +127,48 @@ const queryPerson = async (query: string) => {
   }
 };
 
-const handleClose = () => {
-  dialogVisible.value = false;
+const querySearch = (queryString: string, cb: any) => {
+  improveStore.GetAllFaultsRequest().then((res) => {
+    if (res.code === 200) {
+      const results = res.msg.filter((fault: string) => {
+        if (fault.toLowerCase().includes(queryString.toLowerCase())) {
+          return fault;
+        }
+      });
+
+      const cbResult = results.map((item: any) => ({
+        value: item,
+      }));
+
+      cb(cbResult);
+    }
+  });
 };
-
-const formItems = FormConfig.formItems ?? [];
-const formOrigin: any = {};
-formItems.forEach((item) => {
-  if (item.field === "fllowPeople") {
-    formOrigin[item.field] = fllowPeople.value.push(user.value);
-  } else if (item.field === "faultStartAt") {
-    formOrigin[item.field] = dayjs().format("YYYY-MM-DD HH:mm:ss");
-  } else {
-    formOrigin[item.field] = "";
-  }
-});
-const formData = ref(formOrigin);
-
-const NewFormConfig = computed(() => {
-  return useFormConfig(FormConfig, ["domain"]);
-});
 
 const handleSubmit = () => {
   const data = { ...formData.value };
-  data.name = "【故障】" + nowDate + data.name;
-  data.fllowPeople = fllowPeople.value;
-  data.processPeople = processPeople.value;
-  data.faultStartAt = dayjs().utc().format("YYYY-MM-DD HH:mm:ss");
-  data.operator = user.value;
-  faultStore.reportFaultrRequest(data).then((res) => {
+  data.creator = creator.value;
+  data.executor = executor.value;
+  data.name = fault.value;
+  improveStore.AddActionRequest(data).then((res) => {
     if (res.code === 200) {
       ElMessage.success({
-        message: "故障上报成功",
+        message: "添加成功",
         type: "success",
       });
-      dialogVisible.value = false;
+    } else {
+      ElMessage.warning(res.error);
     }
-    // 更新故障列表
+    dialogVisible.value = false;
+    // 更新action列表
     isLoading.value = true;
-    faultStore.getFaultRequest(faultPageNum.value, faultPageSize.value);
-    // 重新计算故障总数
-    faultStore.getFaultTotalRequest();
+    improveStore.getActionRequest(actionPageNum.value, actionPageSize.value);
     isLoading.value = false;
   });
+};
+
+const handleSelect = (item: any) => {
+  fault.value = item.value;
 };
 </script>
 

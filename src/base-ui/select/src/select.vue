@@ -37,12 +37,6 @@ const props = defineProps({
 
 const selectData = ref(props.modelValue);
 const method = ref(props.methodFn);
-
-method.value(query: string).then((res) => {
-
-})
 </script>
 
-<style scoped>
-
-</style>
+<style scoped></style>

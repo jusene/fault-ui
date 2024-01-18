@@ -1,6 +1,14 @@
 <template>
   <div>
-    <div>
+    <div style="display: flex; padding: 5px">
+      <el-link
+        type="primary"
+        href="https://gumingnc.yuque.com/voph0x/db04y1/ife8vf5kid87cf7y"
+        target="_blank"
+        >使用文档</el-link
+      >
+    </div>
+    <div class="fault-page">
       <faultForm />
     </div>
     <div class="fault-page">

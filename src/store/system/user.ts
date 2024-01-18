@@ -6,7 +6,10 @@ import {
   getUserList,
   updateUser,
 } from "@/services/axios/user/user";
-import { accountLoginRequest } from "@/services/axios/user/login";
+import {
+  accountLoginRequest,
+  dingTalkLoginRequest,
+} from "@/services/axios/user/login";
 
 interface IUserState {
   user: string;
@@ -63,6 +66,17 @@ export const useUserStore = defineStore("user", {
         localCache.setCache("token", loginResult.data.token);
         return { loginStatus: true, msg: "登陆成功" };
       }
+      return { loginStatus: false, msg: loginResult.data.message };
+    },
+
+    async dingTalkLoginAction(code: any) {
+      const loginResult = await dingTalkLoginRequest(code);
+
+      if (loginResult.data.code === 200) {
+        localCache.setCache("token", loginResult.data.token);
+        return { loginStatus: true, msg: "登陆成功" };
+      }
+
       return { loginStatus: false, msg: loginResult.data.message };
     },
   },

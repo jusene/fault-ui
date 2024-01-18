@@ -1,7 +1,11 @@
 <template>
   <div class="nav-menu">
     <div class="logo">
-      <img class="img" src="~@/assets/img/logo.svg" alt="logo" />
+      <img
+        class="img"
+        src="https://img.gumingnc.com/newton/20230217055538CST97811676627738132.png"
+        alt="logo"
+      />
       <span v-if="!props.collapse" class="title">{{ props.title }}</span>
     </div>
     <el-menu

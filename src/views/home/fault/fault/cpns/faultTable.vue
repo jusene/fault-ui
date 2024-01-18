@@ -58,7 +58,12 @@
       </template>
       <template #history="scope">
         <el-button type="primary" link @click="handleRead(scope.row)"
-          >查看</el-button
+          >历史</el-button
+        >
+      </template>
+      <template #action="scope">
+        <el-button type="primary" link @click="handleAction(scope.row)"
+          >action</el-button
         >
       </template>
       <template #footer>
@@ -90,6 +95,11 @@
       ref="pageDrawerHistoryRef"
       :rowData="rowData"
     ></faultDrawerHistory>
+
+    <faultActionDialog
+      ref="pageActionDialogRef"
+      :rowData="rowData"
+    ></faultActionDialog>
   </div>
 </template>
 
@@ -106,6 +116,7 @@ import faultDrawerNotice from "./faultDrawerNotice.vue";
 import faultDrawerEdit from "./faultDrawerEdit.vue";
 import faultDrawerHistory from "./faultDrawerHistory.vue";
 import faultAddDialog from "./faultAddDialog.vue";
+import faultActionDialog from "./faultActionDialog.vue";
 
 const faultStore = useFaultStore();
 const rowData = ref({});
@@ -114,6 +125,7 @@ const pageDrawerNoticeRef = ref<InstanceType<typeof faultDrawerNotice>>();
 const pageDrawerEditRef = ref<InstanceType<typeof faultDrawerEdit>>();
 const pageDrawerHistoryRef = ref<InstanceType<typeof faultDrawerHistory>>();
 const pageAddModalRef = ref<InstanceType<typeof faultAddDialog>>();
+const pageActionDialogRef = ref<InstanceType<typeof faultActionDialog>>();
 
 // 首次加载数据
 const { faultPageSize, faultPageNum, faultTotal, faultList } =
@@ -184,6 +196,15 @@ const handleRead = (row: any) => {
   if (pageDrawerHistoryRef.value) {
     rowData.value = row;
     pageDrawerHistoryRef.value.drawerVisible = true;
+  }
+};
+
+const handleAction = (row: any) => {
+  console.log(row);
+  if (pageActionDialogRef.value) {
+    console.log(row);
+    rowData.value = row;
+    pageActionDialogRef.value.dialogVisible = true;
   }
 };
 </script>

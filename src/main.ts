@@ -7,6 +7,7 @@ import "./assets/css/index.less";
 import "element-plus/theme-chalk/el-message.css";
 import "element-plus/theme-chalk/el-loading.css";
 import "element-plus/theme-chalk/el-notification.css";
+import "element-plus/theme-chalk/el-tooltip.css";
 import { menuLst } from "@/components/nav-menu/src/config/menu-lst";
 import { mapMenusToRoutes } from "@/utils/map-menu";
 import { globalProperties } from "./global";

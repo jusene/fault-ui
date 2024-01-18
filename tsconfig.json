@@ -11,6 +11,7 @@
     "forceConsistentCasingInFileNames": true,
     "useDefineForClassFields": true,
     "sourceMap": true,
+    "allowJs": true,
     "baseUrl": ".",
     "types": ["webpack-env"],
     "paths": {
@@ -25,6 +26,6 @@
     "src/**/*.vue",
     "tests/**/*.ts",
     "tests/**/*.tsx"
-  ],
+, "src/utils/watermark.js"  ],
   "exclude": ["node_modules"]
 }

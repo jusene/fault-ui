@@ -136,6 +136,12 @@ export const editFormConfig: IForm = {
       placeholder: "请输入语雀链接",
     },
     {
+      field: "dingUrl",
+      type: "input",
+      label: "复盘机器人url",
+      placeholder: "请输入复盘机器人钉钉url",
+    },
+    {
       field: "mainResponsibility",
       type: "slot",
       label: "主责",

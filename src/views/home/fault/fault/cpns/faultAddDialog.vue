@@ -140,6 +140,7 @@ const handleSubmit = () => {
   const data = { ...formData.value };
   data.mainResponsibility = mainResponsibility.value;
   data.secondResponsibility = secondResponsibility.value;
+  data.name = "【故障】" + data.name;
   // 更新故障信息
   faultStore.updateFaultRequest(data).then((res) => {
     if (res.code === 200) {

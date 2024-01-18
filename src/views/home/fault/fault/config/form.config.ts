@@ -61,8 +61,8 @@ export const FormConfig: IForm = {
     {
       field: "faultStartAt",
       type: "datepicker",
-      label: "故障发生时间",
-      placeholder: "请输入故障发生时间",
+      label: "故障通告时间",
+      placeholder: "请输入故障通告时间",
       otheroptions: {
         type: "datetime",
       },

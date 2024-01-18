@@ -128,7 +128,6 @@ const editFormData = ref({});
 watch(
   () => props.rowData,
   (val, oldval) => {
-    console.log(val);
     const newVal = { ...val };
     const newTag = newVal.tag?.split(",");
     const newDomain = newVal.domain?.split(",");

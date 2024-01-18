@@ -82,13 +82,6 @@ export const noticeFormConfig: IForm = {
       placeholder: "请输入当前状态",
       options: [],
     },
-    {
-      field: "dingUrl",
-      type: "input",
-      label: "复盘机器人url",
-      placeholder: "请输入复盘机器人钉钉url",
-      isHidden: true,
-    },
   ],
   itemStyle: {
     padding: "1px 20px",

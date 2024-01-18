@@ -1,6 +1,17 @@
 <template>
   <div>
     <MyForm v-bind="NewFormConfig" v-model="formData">
+      <template #name="scope">
+        <el-autocomplete
+          v-model="fault"
+          style="width: 100%"
+          :fetch-suggestions="querySearchFault"
+          :trigger-on-focus="false"
+          clearable
+          :placeholder="scope.placeholder"
+          @select="handleSelectFault"
+        />
+      </template>
       <template #footer>
         <div class="action-row">
           <el-button :icon="Refresh" @click="handleReset(formData)"
@@ -21,11 +32,12 @@ import { searchFormConfig } from "../config/search.config";
 import { computed, ref } from "vue";
 import { ElButton } from "element-plus";
 import { Search, Refresh } from "@element-plus/icons-vue";
-import { useFaultStore } from "@/store/fault/fault";
+import { useFaultStore, useImproveStore } from "@/store";
 import { storeToRefs } from "pinia";
 import { useFormConfig } from "@/hooks/useFormConfig";
 
 const faultStore = useFaultStore();
+const improveStore = useImproveStore();
 const { faultPageSize, faultPageNum, faultList, faultTotal } =
   storeToRefs(faultStore);
 const formItems = searchFormConfig.formItems ?? [];
@@ -45,11 +57,38 @@ const NewFormConfig = computed(() => {
     "level",
     "domainLevel",
     "status",
+    "source",
+    "tag",
+    "group",
   ]);
 });
 
+const fault = ref();
+const handleSelectFault = (item: any) => {
+  fault.value = item.value;
+};
+const querySearchFault = (queryString: string, cb: any) => {
+  improveStore.GetAllFaultsRequest().then((res) => {
+    if (res.code === 200) {
+      const results = res.msg.filter((fault: string) => {
+        if (fault.toLowerCase().includes(queryString.toLowerCase())) {
+          return fault;
+        }
+      });
+
+      const cbResult = results.map((item: any) => ({
+        value: item,
+      }));
+
+      cb(cbResult);
+    }
+  });
+};
+
 const handleSearch = () => {
-  faultStore.searchFaultRequest(formData.value).then((res) => {
+  const data = { ...formData.value };
+  data.name = fault.value;
+  faultStore.searchFaultRequest(data).then((res) => {
     faultList.value = res.msg;
     faultTotal.value = res.msg.length ?? 0;
   });
@@ -64,6 +103,7 @@ const handleReset = (value: any) => {
       value[key] = "";
     }
   }
+  fault.value = "";
   // 刷新数据
   faultStore.getFaultTotalRequest();
   faultStore.getFaultRequest(faultPageNum.value, faultPageSize.value);

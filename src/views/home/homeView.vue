@@ -9,7 +9,7 @@
           <NavHeader @foldChange="handleFoldChange" />
         </el-header>
         <el-main class="page-content">
-          <div class="page-info">
+          <div class="page-info" id="water">
             <RouterView />
           </div>
         </el-main>
@@ -21,12 +21,22 @@
 <script setup lang="ts">
 import NavMenu from "@/components/nav-menu";
 import NavHeader from "@/components/nav-header";
-import { ref } from "vue";
+import { onMounted, ref } from "vue";
+import watermark from "@/utils/watermark.js";
+import { useUserStore } from "@/store";
+import { storeToRefs } from "pinia";
 
+const userStore = useUserStore();
+const { user } = storeToRefs(userStore);
 const isCollapse = ref(false);
 const handleFoldChange = (isFold: boolean) => {
   isCollapse.value = isFold;
 };
+
+onMounted(() => {
+  const container = document.getElementById("water");
+  watermark.set("稳定性平台 " + user.value, container);
+});
 </script>
 
 <style scoped lang="less">
